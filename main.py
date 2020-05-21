@@ -1,33 +1,14 @@
 #!/usr/bin/env python
-#
-# Project: Video Streaming with Flask
-# Author: Log0 <im [dot] ckieric [at] gmail [dot] com>
-# Date: 2014/12/21
-# Website: http://www.chioka.in/
-# Description:
-# Modified to support streaming out with webcams, and not just raw JPEGs.
-# Most of the code credits to Miguel Grinberg, except that I made a small tweak. Thanks!
-# Credits: http://blog.miguelgrinberg.com/post/video-streaming-with-flask
-#
-# Usage:
-# 1. Install Python dependencies: cv2, flask. (wish that pip install works like a charm)
-# 2. Run "python main.py".
-# 3. Navigate the browser to the local webpage.
+
 
 from gevent import monkey
 monkey.patch_all()
 
 
 from flask import Flask, render_template, Response, request
-#from camera import VideoCamera
 from camera import Camera
 import AtMega as atmega
-from threading import Thread
-import cv2
 import os
-
-from gevent import pywsgi
-
 
 
 def saveFile(name, content):
@@ -37,13 +18,14 @@ def saveFile(name, content):
 
 
 def autoInstall():
+    # flashing avr with raspberry
+    # https://www.youtube.com/watch?v=npSwLOMfstY
     os.system("cd avr/ && make install")
 
 
 app = Flask(__name__)
 targetInterface = atmega.AtMega2561()
 response = b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n'
-
 
 
 ###################### API ######################
@@ -77,19 +59,6 @@ def getUpload():
     autoInstall()
     # print("data = " + str(json))
     return "uploaded"
-
-
-def frame():
-    camera = cv2.VideoCapture(0)
-    if not camera.isOpened():
-        raise RuntimeError('Could not start camera.')
-
-    while True:
-        # read current frame
-        _, img = camera.read()
-
-        # encode as a jpeg image and return it
-        yield cv2.imencode('.jpg', img)[1].tobytes()
 
 
 def gen(camera):
