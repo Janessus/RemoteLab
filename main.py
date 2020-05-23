@@ -20,7 +20,8 @@ def saveFile(name, content):
 def autoInstall():
     # flashing avr with raspberry
     # https://www.youtube.com/watch?v=npSwLOMfstY
-    os.system("cd avr/ && make install")
+    print("Installing...")
+    #os.system("cd avr/ && make install")
 
 
 app = Flask(__name__)
@@ -61,6 +62,15 @@ def getUpload():
     return "uploaded"
 
 
+@app.route('/uploader', methods = ['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save("main.hex")
+        autoInstall()
+        return index()
+
+        
 def gen(camera):
     """Video streaming generator function."""
     while True:
