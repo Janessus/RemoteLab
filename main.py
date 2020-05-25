@@ -62,7 +62,7 @@ def getUpload():
     return "uploaded"
 
 
-@app.route('/uploader', methods = ['GET', 'POST'])
+@app.route('/uploader', methods=['POST'])
 def upload_file():
     if request.method == 'POST':
         f = request.files['file']
