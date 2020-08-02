@@ -11,6 +11,9 @@ import AtMega as atmega
 import os
 
 
+host = '192.168.178.54'
+
+
 def saveFile(name, content):
     f = open("avr/" + name, 'w')
     f.write(content)
@@ -21,7 +24,7 @@ def autoInstall():
     # flashing avr with raspberry
     # https://www.youtube.com/watch?v=npSwLOMfstY
     print("Installing...")
-    #os.system("cd avr/ && make install")
+    os.system("cd avr/ && make install")
 
 
 app = Flask(__name__)
@@ -56,7 +59,7 @@ def getInput():
 def getUpload():
     json = request.get_json()
 
-    saveFile('main.hex', json['file'])
+    saveFile('./avr/main.hex', json['file'])
     autoInstall()
     # print("data = " + str(json))
     return "uploaded"
@@ -87,5 +90,5 @@ def video_feed():
 
 
 if __name__ == '__main__':
-    app.run(host='192.168.178.54', debug=True, threaded=True)
+    app.run(host=host, debug=True, threaded=True)
 
